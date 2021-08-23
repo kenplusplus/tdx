@@ -14,6 +14,7 @@
 
 #include <linux/types.h>
 #include <linux/stddef.h>
+#include <linux/device.h>
 
 #define PATTR_MEM_ENCRYPT		0	/* Encrypted memory */
 #define PATTR_HOST_MEM_ENCRYPT		1	/* Host encrypted memory */
@@ -37,6 +38,21 @@
 #else	/* !CONFIG_ARCH_HAS_PROTECTED_GUEST */
 
 static inline bool prot_guest_has(unsigned int attr) { return false; }
+
+/*
+ * prot_guest_authorized() - Used to get ARCH specific authorized status of
+ *			     given device.
+ * @dev - device structure
+ * @dev_str - device search string (for PCI bus it is vendor:device, other
+ *	      bus device may use dev_name(dev))
+ *
+ * Return True to allow the device or False to deny it.
+ *
+ */
+static inline bool prot_guest_authorized(struct device *dev, char *dev_str)
+{
+	return dev->authorized;
+}
 
 #endif	/* CONFIG_ARCH_HAS_PROTECTED_GUEST */
 
